@@ -7,6 +7,7 @@ allowing management of animals, food inventory, and staff records.
 import sqlite3
 import datetime
 
+
 # Database name
 DB_NAME = "zoo.db"
 
@@ -768,5 +769,136 @@ class Feeding:
         Create a new feeding record.
 
         Args:
-            conn (sqlite3
+            conn (sqlite3.Connection): Database connection
+            animal_id (int): Animal ID being fed (foreign key to Animals table)
+            food_type_id (int): Food type ID (foreign key to FoodTypes table)
+            staff_id (int): Staff member ID who performed the feeding (foreign key to Staff table)
+            quantity (float): Quantity of food provided
+            notes (str, optional): Additional notes about the feeding
+            feeding_date (str, optional): Date of feeding in ISO format (YYYY-MM-DD)
+
+        Returns:
+            int: ID of the newly created feeding record
         """
+        cursor = conn.cursor()
+
+        # Use current date if feeding_date not provided
+        if feeding_date is None:
+            feeding_date = datetime.datetime.now().strftime("%Y-%m-%d")
+
+        cursor.execute(
+            """INSERT INTO Feeding (animalID, foodTypeID, staffID, quantity, notes, feeding_date) 
+               VALUES (?, ?, ?, ?, ?, ?)""",
+            (animal_id, food_type_id, staff_id, quantity, notes, feeding_date)
+        )
+        return cursor.lastrowid
+
+    @staticmethod
+    @transaction
+    def read(conn, feeding_id):
+        """
+        Read a feeding record by ID.
+
+        Args:
+            conn (sqlite3.Connection): Database connection
+            feeding_id (int): Feeding record ID to retrieve
+
+        Returns:
+            tuple: Feeding record or None if not found
+        """
+        cursor = conn.cursor()
+        cursor.execute(
+            """SELECT f.feedingID, f.animalID, a.name as animal_name, 
+                      f.foodTypeID, ft.name as food_type, 
+                      f.staffID, s.firstName || ' ' || s.lastName as staff_name, 
+                      f.quantity, f.notes, f.feeding_date
+               FROM Feeding f
+               JOIN Animals a ON f.animalID = a.animalID
+               JOIN FoodTypes ft ON f.foodTypeID = ft.foodTypeID
+               JOIN Staff s ON f.staffID = s.staffID
+               WHERE f.feedingID = ?""",
+            (feeding_id,)
+        )
+        return cursor.fetchone()
+
+    @staticmethod
+    @transaction
+    def read_all(conn):
+        """
+        Read all feeding records.
+
+        Args:
+            conn (sqlite3.Connection): Database connection
+
+        Returns:
+            list: List of all feeding records
+        """
+        cursor = conn.cursor()
+        cursor.execute(
+            """SELECT f.feedingID, f.animalID, a.name as animal_name, 
+                      f.foodTypeID, ft.name as food_type, 
+                      f.staffID, s.firstName || ' ' || s.lastName as staff_name, 
+                      f.quantity, f.notes, f.feeding_date
+               FROM Feeding f
+               JOIN Animals a ON f.animalID = a.animalID
+               JOIN FoodTypes ft ON f.foodTypeID = ft.foodTypeID
+               JOIN Staff s ON f.staffID = s.staffID"""
+        )
+        return cursor.fetchall()
+
+    @staticmethod
+    @transaction
+    def update(conn, feeding_id, animal_id, food_type_id, staff_id, quantity, notes=None, feeding_date=None):
+        """
+        Update a feeding record.
+
+        Args:
+            conn (sqlite3.Connection): Database connection
+            feeding_id (int): Feeding record ID to update
+            animal_id (int): Updated animal ID
+            food_type_id (int): Updated food type ID
+            staff_id (int): Updated staff ID
+            quantity (float): Updated quantity
+            notes (str, optional): Updated notes
+            feeding_date (str, optional): Updated feeding date
+
+        Returns:
+            bool: True if update was successful, False otherwise
+        """
+        cursor = conn.cursor()
+
+        # Get current feeding_date if not provided
+        if feeding_date is None:
+            cursor.execute(
+                "SELECT feeding_date FROM Feeding WHERE feedingID = ?",
+                (feeding_id,)
+            )
+            current = cursor.fetchone()
+            if current:
+                feeding_date = current[0]
+
+        cursor.execute(
+            """UPDATE Feeding 
+               SET animalID = ?, foodTypeID = ?, staffID = ?, quantity = ?, 
+                   notes = ?, feeding_date = ? 
+               WHERE feedingID = ?""",
+            (animal_id, food_type_id, staff_id, quantity, notes, feeding_date, feeding_id)
+        )
+        return cursor.rowcount > 0
+
+    @staticmethod
+    @transaction
+    def delete(conn, feeding_id):
+        """
+        Delete a feeding record.
+
+        Args:
+            conn (sqlite3.Connection): Database connection
+            feeding_id (int): Feeding record ID to delete
+
+        Returns:
+            bool: True if deletion was successful, False otherwise
+        """
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM Feeding WHERE feedingID = ?", (feeding_id,))
+        return cursor.rowcount > 0
