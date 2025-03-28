@@ -33,7 +33,7 @@ class TestZooManagementSystem(unittest.TestCase):
         # Create Species table
         cursor.execute('''
         CREATE TABLE Species (
-            speciesID INTEGER PRIMARY KEY AUTOINCREMENT,
+            speciesID INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             habitat TEXT,
             diet TEXT
@@ -42,7 +42,7 @@ class TestZooManagementSystem(unittest.TestCase):
         # Create Animals table
         cursor.execute('''
         CREATE TABLE Animals (
-            animalID INTEGER PRIMARY KEY AUTOINCREMENT,
+            animalID INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             speciesID INTEGER,
             gender TEXT,
@@ -54,7 +54,7 @@ class TestZooManagementSystem(unittest.TestCase):
         # Create FoodTypes table
         cursor.execute('''
         CREATE TABLE FoodTypes (
-            foodTypeID INTEGER PRIMARY KEY AUTOINCREMENT,
+            foodTypeID INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             unit TEXT,
             storage_requirements TEXT
@@ -63,7 +63,7 @@ class TestZooManagementSystem(unittest.TestCase):
         # Create FoodInventory table
         cursor.execute('''
         CREATE TABLE FoodInventory (
-            inventoryID INTEGER PRIMARY KEY AUTOINCREMENT,
+            inventoryID INTEGER PRIMARY KEY,
             foodTypeID INTEGER,
             quantity REAL,
             expiration_date TEXT,
@@ -74,7 +74,7 @@ class TestZooManagementSystem(unittest.TestCase):
         # Create Roles table
         cursor.execute('''
         CREATE TABLE Roles (
-            roleID INTEGER PRIMARY KEY AUTOINCREMENT,
+            roleID INTEGER PRIMARY KEY,
             title TEXT NOT NULL,
             department TEXT,
             description TEXT
@@ -83,7 +83,7 @@ class TestZooManagementSystem(unittest.TestCase):
         # Create Staff table
         cursor.execute('''
         CREATE TABLE Staff (
-            staffID INTEGER PRIMARY KEY AUTOINCREMENT,
+            staffID INTEGER PRIMARY KEY,
             firstName TEXT NOT NULL,
             lastName TEXT NOT NULL,
             roleID INTEGER,
@@ -96,7 +96,7 @@ class TestZooManagementSystem(unittest.TestCase):
         # Create Feeding table
         cursor.execute('''
         CREATE TABLE Feeding (
-            feedingID INTEGER PRIMARY KEY AUTOINCREMENT,
+            feedingID INTEGER PRIMARY KEY,
             animalID INTEGER,
             foodTypeID INTEGER,
             staffID INTEGER,
