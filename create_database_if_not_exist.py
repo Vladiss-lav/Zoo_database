@@ -123,42 +123,6 @@ def initialize_database(db_name="zoo.db", force_new=False):
     )
     ''')
 
-    # Insert some default data
-    # Insert species
-    species_data = [
-        (1, 'Lion', 'Savanna', 'Carnivore'),
-        (2, 'Elephant', 'Grassland', 'Herbivore'),
-        (3, 'Penguin', 'Polar', 'Piscivore'),
-        (4, 'Giraffe', 'Savanna', 'Herbivore')
-    ]
-
-    cursor.executemany("INSERT OR IGNORE INTO Species (speciesID, name, habitat, diet) VALUES (?, ?, ?, ?)",
-                       species_data)
-
-    # Insert food types
-    food_data = [
-        (1, 'Meat', 'kg', 'Refrigerated'),
-        (2, 'Hay', 'kg', 'Dry storage'),
-        (3, 'Fish', 'kg', 'Frozen'),
-        (4, 'Fruits', 'kg', 'Fresh produce'),
-        (5, 'Vegetables', 'kg', 'Fresh produce')
-    ]
-
-    cursor.executemany(
-        "INSERT OR IGNORE INTO FoodTypes (foodTypeID, name, unit, storage_requirements) VALUES (?, ?, ?, ?)",
-        food_data)
-
-    # Insert roles
-    roles_data = [
-        (1, 'Zookeeper', 'Animal Care', 'Responsible for daily care of animals'),
-        (2, 'Veterinarian', 'Medical', 'Provides medical care to animals'),
-        (3, 'Manager', 'Administration', 'Oversees zoo operations'),
-        (4, 'Guide', 'Education', 'Conducts tours and educational programs')
-    ]
-
-    cursor.executemany("INSERT OR IGNORE INTO Roles (roleID, title, department, description) VALUES (?, ?, ?, ?)",
-                       roles_data)
-
     conn.commit()
     conn.close()
 
