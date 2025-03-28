@@ -1,8 +1,3 @@
-import os
-import sys
-import sqlite3
-import datetime
-
 # Import the initialization function and CRUD classes
 from create_database_if_not_exist import initialize_database
 from crud import Species, Animals, FoodTypes, FoodInventory, Roles, Staff, Feeding
@@ -14,7 +9,7 @@ def populate_database():
     """
     try:
         # Initialize the database (this will reset it if it already exists)
-        initialize_database(force_new=False)
+        initialize_database(force_new=False) # Switch to "TRUE" if you wish to regenarate database
         print("Database initialized successfully!")
 
         # 1. Create Species
